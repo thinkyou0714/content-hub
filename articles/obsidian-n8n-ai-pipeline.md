@@ -1,13 +1,17 @@
 ---
-title: "ObsidianをAIの第二の脳にした：7本のn8nワークフローで作ったナレッジ自動管理システム"
-emoji: "🧠"
-type: "tech"
-topics: ["obsidian", "n8n", "automation", "claudecode"]
-published: false
-publish_scheduled: "2026-05-23T09:00:00+09:00"
-hold_reason: ""
-next_action: "X先出しツイート 09:30 + 30分後リプライで本文URL"
-stage: "SCHEDULED"
+title: ObsidianをAIの第二の脳にした：7本のn8nワークフローで作ったナレッジ自動管理システム
+emoji: 🧠
+type: tech
+topics:
+  - obsidian
+  - n8n
+  - automation
+  - claudecode
+published: true
+publish_scheduled: '2026-05-23T09:00:00+09:00'
+hold_reason: ''
+next_action: X先出しツイート 09:30 + 30分後リプライで本文URL
+stage: SCHEDULED
 ---
 
 ## TL;DR
