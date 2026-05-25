@@ -14,6 +14,11 @@ next_action: X先出しツイート 09:30 + 30分後リプライで本文URL
 stage: SCHEDULED
 ---
 
+:::message
+**📚 シリーズ「AIと自動化で副業システムを作る」全4回**
+①hooks（本記事） / [②n8n全体像](/articles/n8n-claudecode-automation-overview) / [③Obsidian](/articles/obsidian-n8n-ai-pipeline) / [④画像パイプライン](/articles/ai-image-pipeline)
+:::
+
 ## TL;DR
 
 - Claude Code の hooks は「AIが何かをするたびに自動で走るスクリプト」。設定すれば手動指示がほぼ不要になる
@@ -23,6 +28,12 @@ stage: SCHEDULED
 
 :::message
 **検証環境**: Windows 11 + Claude Code（2026年5月時点）。hooks の仕様はバージョンで変わるので、設定前に[公式ドキュメント](https://docs.claude.com/en/docs/claude-code/hooks)で最新の挙動を確認してほしい。Mac/Linux では文字コード問題は発生しないので、その節だけ読み替えてください。
+:::
+
+:::details この記事の対象読者・前提・得られること
+- **対象**: Claude Code を日常的に使い、毎セッション同じ手動指示を繰り返している人
+- **前提**: Claude Code を一度は触ったことがある
+- **得られること**: hooks で「指示」を「設計」に変える、5イベント別の実装パターンと落とし穴
 :::
 
 ---
@@ -370,6 +381,10 @@ Layer 0 を起点に設計する。守りが固まったら Layer 1 で「賢く
 
 数えると毎セッション10回以上言っていた。今は0回だ。
 
+:::message
+（数字の出どころ）「10回以上」は `session_logger.py` のログから、繰り返し型の指示発話を数えた俺の環境での実測値。「47本」は `.claude/hooks/` 配下のスクリプト数。環境によって変わるので、絶対値ではなく傾向として読んでほしい。
+:::
+
 ---
 
 ## 次にやること
@@ -395,6 +410,7 @@ Layer 0 を起点に設計する。守りが固まったら Layer 1 で「賢く
 ## 更新履歴
 
 - **2026-05-25**: hooks のイベント種別（「5種類」→「主要5種＋他多数」）と exit code の挙動説明を公式仕様に合わせて修正。`async` × `exit 2` の節に最新版の補足を追記。secret 検知の限界（検知漏れ前提・多層防御）を明記。Layer 構成図を Mermaid 化。
+- **2026-05-25**: シリーズ導線・「対象読者/前提/得られること」ブロック・数字の計測方法の注記を追加。
 
 ---
 

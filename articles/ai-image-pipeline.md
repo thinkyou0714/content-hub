@@ -5,14 +5,19 @@ type: tech
 topics:
   - n8n
   - claudecode
-  - obsidian
   - 生成ai
+  - 画像生成
 published: false
 publish_scheduled: ''
 hold_reason: 'ドラフト：公開前に画像実物のスクショ差し込みとモデル価格の再確認'
 next_action: 画像実物の添付 → published:true に変更 → X先出し
 stage: DRAFT
 ---
+
+:::message
+**📚 シリーズ「AIと自動化で副業システムを作る」全4回**
+[①hooks](/articles/claude-code-hooks-47) / [②n8n全体像](/articles/n8n-claudecode-automation-overview) / [③Obsidian](/articles/obsidian-n8n-ai-pipeline) / ④画像パイプライン（本記事）
+:::
 
 ## TL;DR
 
@@ -23,6 +28,12 @@ stage: DRAFT
 
 :::message
 **検証環境**: n8n（セルフホスト）+ Claude Code + Supabase Storage + Anthropic/各画像API（2026年5月時点）。画像モデルの価格・仕様は変動が激しい。**価格はハードコードせず実行時に再確認**してほしい。
+:::
+
+:::details この記事の対象読者・前提・得られること
+- **対象**: 技術ブログや SNS のビジュアル制作を自動化したい個人発信者
+- **前提**: n8n など何らかの自動化ツールの基礎、Markdown でのブログ運用
+- **得られること**: 図解 / サムネ / 装飾を役割分担で自動生成するパイプラインの設計と注意点
 :::
 
 ---
