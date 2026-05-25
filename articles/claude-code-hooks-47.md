@@ -16,7 +16,7 @@ stage: SCHEDULED
 
 :::message
 **📚 シリーズ「AIと自動化で副業システムを作る」全4回**
-①hooks（本記事） / [②n8n全体像](/articles/n8n-claudecode-automation-overview) / [③Obsidian](/articles/obsidian-n8n-ai-pipeline) / [④画像パイプライン](/articles/ai-image-pipeline)
+①hooks（本記事） / [②n8n全体像](https://zenn.dev/thinkyou0714/articles/n8n-claudecode-automation-overview) / [③Obsidian](https://zenn.dev/thinkyou0714/articles/obsidian-n8n-ai-pipeline) / [④画像パイプライン](https://zenn.dev/thinkyou0714/articles/ai-image-pipeline)
 :::
 
 ## TL;DR
@@ -401,9 +401,9 @@ Layer 0 を起点に設計する。守りが固まったら Layer 1 で「賢く
 
 このシステム全体の設計については以下を参照してほしい。
 
-- [n8n × Claude Code で55本のWFを動かしている：副業自動化システムの全体像](/articles/n8n-claudecode-automation-overview)
-- [ObsidianをAIの第二の脳にした：7本のn8nワークフローで作ったナレッジ自動管理システム](/articles/obsidian-n8n-ai-pipeline)
-- [記事のOGP・図解・サムネを全部AIに作らせた：n8n × Claude Code × Satori の画像生成パイプライン](/articles/ai-image-pipeline)
+- [n8n × Claude Code で55本のWFを動かしている：副業自動化システムの全体像](https://zenn.dev/thinkyou0714/articles/n8n-claudecode-automation-overview)
+- [ObsidianをAIの第二の脳にした：7本のn8nワークフローで作ったナレッジ自動管理システム](https://zenn.dev/thinkyou0714/articles/obsidian-n8n-ai-pipeline)
+- [記事のOGP・図解・サムネを全部AIに作らせた：n8n × Claude Code × Satori の画像生成パイプライン](https://zenn.dev/thinkyou0714/articles/ai-image-pipeline)
 
 ---
 
@@ -412,6 +412,7 @@ Layer 0 を起点に設計する。守りが固まったら Layer 1 で「賢く
 - **2026-05-25**: hooks のイベント種別（「5種類」→「主要5種＋他多数」）と exit code の挙動説明を公式仕様に合わせて修正。`async` × `exit 2` の節に最新版の補足を追記。secret 検知の限界（検知漏れ前提・多層防御）を明記。Layer 構成図を Mermaid 化。
 - **2026-05-25**: シリーズ導線・「対象読者/前提/得られること」ブロック・数字の計測方法の注記を追加。
 - **2026-05-25**: exit code の挙動をイベント依存として精緻化（`exit 0` の stdout 表示先、`exit 2` の stderr 渡り先は `UserPromptSubmit` ではユーザーのみ等）。
+- **2026-05-25**: 記事間リンクをルート相対（`/articles/`）からフルURL（`zenn.dev/...`）に修正し、404リスクを解消。
 
 ---
 

@@ -16,7 +16,7 @@ stage: SCHEDULED
 
 :::message
 **📚 シリーズ「AIと自動化で副業システムを作る」全4回**
-[①hooks](/articles/claude-code-hooks-47) / ②n8n全体像（本記事） / [③Obsidian](/articles/obsidian-n8n-ai-pipeline) / [④画像パイプライン](/articles/ai-image-pipeline)
+[①hooks](https://zenn.dev/thinkyou0714/articles/claude-code-hooks-47) / ②n8n全体像（本記事） / [③Obsidian](https://zenn.dev/thinkyou0714/articles/obsidian-n8n-ai-pipeline) / [④画像パイプライン](https://zenn.dev/thinkyou0714/articles/ai-image-pipeline)
 :::
 
 ## TL;DR
@@ -309,9 +309,9 @@ n8n の WF 設計ノウハウは THINK YOU LAB で詳しく共有している。
 
 ## 関連記事
 
-- [ObsidianをAIの第二の脳にした：7本のn8nワークフローで作ったナレッジ自動管理システム](/articles/obsidian-n8n-ai-pipeline)
-- [Claude Code hooksを47本実装した話：AIへの自動指示を設計するという仕事](/articles/claude-code-hooks-47)
-- [記事のOGP・図解・サムネを全部AIに作らせた：n8n × Claude Code × Satori の画像生成パイプライン](/articles/ai-image-pipeline)
+- [ObsidianをAIの第二の脳にした：7本のn8nワークフローで作ったナレッジ自動管理システム](https://zenn.dev/thinkyou0714/articles/obsidian-n8n-ai-pipeline)
+- [Claude Code hooksを47本実装した話：AIへの自動指示を設計するという仕事](https://zenn.dev/thinkyou0714/articles/claude-code-hooks-47)
+- [記事のOGP・図解・サムネを全部AIに作らせた：n8n × Claude Code × Satori の画像生成パイプライン](https://zenn.dev/thinkyou0714/articles/ai-image-pipeline)
 
 ---
 
@@ -319,6 +319,7 @@ n8n の WF 設計ノウハウは THINK YOU LAB で詳しく共有している。
 
 - **2026-05-25**: Code ノードのサンドボックス制約の記述を「環境依存」に修正（`process.env` は v2.0+ 既定でブロック、`require` は `NODE_FUNCTION_ALLOW_BUILTIN` 前提）。errorWorkflow の発火条件を補足。3レイヤー設計と DLQ パターンを Mermaid 図化。
 - **2026-05-25**: シリーズ導線・「対象読者/前提/得られること」ブロック・コストの算出方法の注記を追加。
+- **2026-05-25**: 記事間リンクをルート相対（`/articles/`）からフルURL（`zenn.dev/...`）に修正し、404リスクを解消。
 
 ---
 

@@ -16,7 +16,7 @@ stage: SCHEDULED
 
 :::message
 **📚 シリーズ「AIと自動化で副業システムを作る」全4回**
-[①hooks](/articles/claude-code-hooks-47) / [②n8n全体像](/articles/n8n-claudecode-automation-overview) / ③Obsidian（本記事） / [④画像パイプライン](/articles/ai-image-pipeline)
+[①hooks](https://zenn.dev/thinkyou0714/articles/claude-code-hooks-47) / [②n8n全体像](https://zenn.dev/thinkyou0714/articles/n8n-claudecode-automation-overview) / ③Obsidian（本記事） / [④画像パイプライン](https://zenn.dev/thinkyou0714/articles/ai-image-pipeline)
 :::
 
 ## TL;DR
@@ -333,9 +333,9 @@ Obsidianの知識ベースが育つほど、Claude Code のセッション品質
 
 ## 関連記事
 
-- [n8n × Claude Code で55本のWFを動かしている：副業自動化システムの全体像](/articles/n8n-claudecode-automation-overview)
-- [Claude Code hooksを47本実装した話：AIへの自動指示を設計するという仕事](/articles/claude-code-hooks-47)
-- [記事のOGP・図解・サムネを全部AIに作らせた：n8n × Claude Code × Satori の画像生成パイプライン](/articles/ai-image-pipeline)
+- [n8n × Claude Code で55本のWFを動かしている：副業自動化システムの全体像](https://zenn.dev/thinkyou0714/articles/n8n-claudecode-automation-overview)
+- [Claude Code hooksを47本実装した話：AIへの自動指示を設計するという仕事](https://zenn.dev/thinkyou0714/articles/claude-code-hooks-47)
+- [記事のOGP・図解・サムネを全部AIに作らせた：n8n × Claude Code × Satori の画像生成パイプライン](https://zenn.dev/thinkyou0714/articles/ai-image-pipeline)
 
 ---
 
@@ -343,6 +343,7 @@ Obsidianの知識ベースが育つほど、Claude Code のセッション品質
 
 - **2026-05-25**: Obsidian Local REST API のポートを修正（既定は HTTPS 27124、HTTP 27123 は既定で無効）。埋め込みコスト比を「1/5以下」→「約1/6.5」に訂正。ベクトルインデックスの現行推奨（HNSW）を追記。素の Linux + Docker での `host.docker.internal` 解決方法を補足。WF-EMBED の依存関係を Mermaid 図化。
 - **2026-05-25**: 検証環境スタックに OpenAI（埋め込み）を追記し本文コードとの矛盾を解消。シリーズ導線・「対象読者/前提/得られること」ブロック・数字の計測方法の注記を追加。
+- **2026-05-25**: 記事間リンクをルート相対（`/articles/`）からフルURL（`zenn.dev/...`）に修正し、404リスクを解消。
 
 ---
 
