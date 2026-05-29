@@ -2,7 +2,9 @@ name: zenn-auto-publish
 
 on:
   schedule:
-    - cron: '*/15 * * * *'
+    # 公開時刻は 09:00 JST 固定運用のため、その枠（00:00-00:45 UTC = 09:00-09:45 JST）だけ
+    # 15分間隔で確認する。終日 */15 で回す必要はない（96回/日 → 4回/日に削減）。
+    - cron: '*/15 0 * * *'
   workflow_dispatch:
 
 jobs:

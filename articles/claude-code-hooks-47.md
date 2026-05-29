@@ -9,9 +9,6 @@ topics:
   - windows
 published: true
 publish_scheduled: '2026-05-17T09:00:00+09:00'
-hold_reason: ''
-next_action: X先出しツイート 09:30 + 30分後リプライで本文URL
-stage: SCHEDULED
 ---
 
 ## TL;DR
@@ -119,10 +116,10 @@ sys.stdout.reconfigure(encoding="utf-8")
 sys.stderr.reconfigure(encoding="utf-8")
 
 PATTERNS = [
-    r'sk-[a-zA-Z0-9]{48}',               # OpenAI API key
-    r'sk-ant-[a-zA-Z0-9-]{90,}',          # Anthropic API key
-    r'xoxb-[0-9]+-[0-9]+-[a-zA-Z0-9]+',  # Slack Bot Token
-    r'ghp_[a-zA-Z0-9]{36}',              # GitHub Personal Access Token
+    r'sk-(?:proj-)?[a-zA-Z0-9_-]{20,}',  # OpenAI API key（sk- / sk-proj- 新旧両形式）
+    r'sk-ant-[a-zA-Z0-9_-]{20,}',        # Anthropic API key（sk-ant-api03-... 等）
+    r'xox[baprs]-[0-9a-zA-Z-]{10,}',     # Slack Token（bot/user/app/refresh/legacy）
+    r'gh[pousr]_[a-zA-Z0-9]{36,}',       # GitHub Token（PAT / OAuth / App / refresh）
     r'AKIA[A-Z0-9]{16}',                 # AWS Access Key
 ]
 

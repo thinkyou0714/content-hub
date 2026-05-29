@@ -9,9 +9,6 @@ topics:
   - 個人開発
 published: true
 publish_scheduled: '2026-05-20T09:00:00+09:00'
-hold_reason: ''
-next_action: X先出しツイート 09:30 + 30分後リプライで本文URL
-stage: SCHEDULED
 ---
 
 ## TL;DR
