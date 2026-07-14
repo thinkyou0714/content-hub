@@ -10,6 +10,6 @@
     "MD041": false, // 先頭行を見出しに: frontmatter があるため無効
     "MD060": false  // テーブル列スタイル: Zenn で正常描画される全角テーブルを許容
   },
-  "globs": ["articles/**/*.md", "README.md"],
+  "globs": ["articles/**/*.md", "content-hub/**/*.md", "README.md"],
   "ignores": ["node_modules"]
 }

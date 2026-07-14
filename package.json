@@ -5,7 +5,7 @@
     "preview": "zenn preview",
     "lint": "npm run lint:md && npm run lint:text && npm run lint:zenn",
     "lint:md": "markdownlint-cli2",
-    "lint:text": "textlint \"articles/*.md\" README.md",
+    "lint:text": "textlint \"articles/*.md\" \"content-hub/**/*.md\" README.md",
     "lint:zenn": "zenn list:articles"
   },
   "dependencies": {
