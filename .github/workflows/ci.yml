@@ -11,11 +11,15 @@ on:
   pull_request:
     paths:
       - 'articles/**'
+      - 'content-hub/**'
+      - 'note/**'
+      - 'tools/**'
       - 'README.md'
       - 'package.json'
       - 'package-lock.json'
       - '.markdownlint-cli2.jsonc'
       - '.textlintrc.json'
+      - '.textlintignore'
       - '.github/workflows/ci.yml'
   push:
     branches: [main]
@@ -43,3 +47,6 @@ jobs:
 
       - name: Lint Japanese prose (textlint)
         run: npm run lint:text
+
+      - name: Test note pipeline
+        run: npm run test:pipeline

@@ -23,8 +23,10 @@ graph LR
 
 | ディレクトリ | 役割 |
 |---|---|
-| [content-hub/](content-hub/) | **文章生成のマスターソース**(戦略 / 文体 / プロンプト / テンプレ / ベストプラクティス100 / ワークフロー / チェックリスト) |
+| [content-hub/](content-hub/) | **文章生成のマスターソース**(戦略 / 文体 / プロンプト / テンプレ / ベストプラクティス100 / ワークフロー / チェックリスト / 編集学習メモリ) |
 | [articles/](articles/) | Zenn記事(Markdown + frontmatter) |
+| [note/](note/) | note記事ワークスペース(AI初稿 / 完成稿 / 生成画像 / 売上記録) |
+| [tools/](tools/) | note収益化パイプラインのスクリプト(生成・画像・学習・KPI) |
 | [.github/workflows/](.github/workflows/) | CI(lint)と予約公開の自動化 |
 
 まず読む: [content-hub/README.md](content-hub/README.md)(ハブの使い方) / [content-hub/workflows/human-tasks.md](content-hub/workflows/human-tasks.md)(人間とAIの役割分担)
@@ -43,6 +45,23 @@ graph LR
 ```bash
 npm install
 npm run preview   # zenn preview（http://localhost:8000）
+```
+
+## note収益化パイプライン
+
+有料noteの「原稿生成 → GPT Image 2 画像埋め込み → 人間修正の学習 → 売上計測」を
+コマンドで回す仕組み。設計は [content-hub/workflows/note-monetization.md](content-hub/workflows/note-monetization.md)、
+使い方は [note/README.md](note/README.md) を参照。
+
+```bash
+npm run note:new -- <slug>            # ワークスペース作成 + コンテキストパック表示
+npm run note:doctor -- <slug>         # 実行前チェック(API鍵・原稿・未記入箇所)
+npm run note:images -- <slug>         # gpt-image ディレクティブから画像生成（要 OPENAI_API_KEY）
+npm run note:images -- <slug> --mock  # 課金なしで画像生成フローを検証
+npm run note:learn -- <slug>          # draft/final の差分を編集学習メモリへ蓄積
+npm run note:status                   # 全記事のパイプライン段階を一覧表示
+npm run note:kpi                      # 売上集計と月10万円目標への進捗表示
+npm run test:pipeline                 # パイプラインのテスト
 ```
 
 ## 品質チェック(Lint)

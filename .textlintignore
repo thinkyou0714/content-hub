@@ -1,0 +1,4 @@
+# 機械(note:learn / Claude API)が書き込むファイルは文体lintの対象外。
+# 内容の妥当性は月次レビューで人間が確認する(content-hub/memory/README.md 参照)。
+content-hub/memory/edit-learnings.md
+content-hub/memory/edits/
