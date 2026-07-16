@@ -28,13 +28,14 @@ graph LR
 | ディレクトリ | 役割 |
 |---|---|
 | [strategy/](strategy/) | ミッション・ペルソナ・コンテンツの柱・チャネル戦略・KPI |
-| [voice/](voice/) | 文体ガイド(全チャネル共通の「声」の定義) |
+| [voice/](voice/) | 文体ガイド + 心を動かす技法(全チャネル共通の「声」の定義) |
 | [research/](research/) | X/Grokトレンド調査の手順書とネタ帳 |
 | [prompts/](prompts/) | 各チャネル向け文章生成プロンプト(AIへの指示書) |
 | [templates/](templates/) | 記事・投稿の構造テンプレート |
 | [best-practices/](best-practices/) | ベストプラクティス100(10カテゴリ x 10個) |
-| [workflows/](workflows/) | コンテンツパイプライン・週次ルーチン・人間タスク定義 |
+| [workflows/](workflows/) | コンテンツパイプライン・note収益化システム・週次ルーチン・人間タスク定義 |
 | [checklists/](checklists/) | 公開前チェックリスト(Zenn / X / 月次レビュー) |
+| [memory/](memory/) | 編集学習メモリ(人間の修正をAIが記憶し次回生成に反映) |
 
 ## 使い方(AIエージェントへの典型的な依頼)
 
@@ -45,7 +46,9 @@ graph LR
 | Zenn記事を書く | `prompts/zenn-article.md` + `voice/style-guide.md` + `templates/zenn-article-template.md` |
 | X投稿を作る | `prompts/x-single-post.md` または `prompts/x-thread.md` |
 | 記事をXに展開する | `prompts/repurpose.md` |
-| 有料noteを書く | `prompts/note-paid-article.md` |
+| 有料noteを書く | `workflows/note-monetization.md`(パイプライン)+ `prompts/note-paid-article.md` |
+| noteの画像を作る | 原稿に `gpt-image` ディレクティブを書き `npm run note:images` |
+| 人間の修正を学習させる | `npm run note:learn` → `memory/edit-learnings.md`(手動抽出は `prompts/edit-learning.md`) |
 | ネタを探す | `research/trend-research.md` のGrokプロンプトを人間に依頼 |
 | 公開前チェック | `checklists/` の該当チェックリスト |
 

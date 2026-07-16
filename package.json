@@ -6,9 +6,15 @@
     "lint": "npm run lint:md && npm run lint:text && npm run lint:zenn",
     "lint:md": "markdownlint-cli2",
     "lint:text": "textlint \"articles/*.md\" \"content-hub/**/*.md\" README.md",
-    "lint:zenn": "zenn list:articles"
+    "lint:zenn": "zenn list:articles",
+    "note:new": "node tools/note-new.mjs",
+    "note:images": "node tools/note-images.mjs",
+    "note:learn": "node tools/note-learn.mjs",
+    "note:kpi": "node tools/note-kpi.mjs",
+    "test:pipeline": "node --test tools/test/*.test.mjs"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.111.0",
     "zenn-cli": "^0.4.8"
   },
   "devDependencies": {

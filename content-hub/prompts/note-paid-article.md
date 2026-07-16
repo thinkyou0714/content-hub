@@ -3,9 +3,15 @@
 ## 必読コンテキスト(AIに一緒に渡す)
 
 - [../voice/style-guide.md](../voice/style-guide.md)(noteのトーン調整の節)
+- [../voice/emotional-writing.md](../voice/emotional-writing.md)(心を動かす技法と配置)
+- [../memory/edit-learnings.md](../memory/edit-learnings.md)(過去の人間修正から学んだルール)
 - [../templates/note-article-template.md](../templates/note-article-template.md)(無料部分/有料部分の構造)
 - [../strategy/channels.md](../strategy/channels.md)(noteの運用ルール)
 - 需要の根拠(Zenn/Xでの反応データ)
+
+生成は `npm run note:new -- <slug>` で作ったワークスペース
+(`note/works/<slug>/draft.md`)に対して行う。
+パイプライン全体は [../workflows/note-monetization.md](../workflows/note-monetization.md) を参照。
 
 ## 入力変数
 
@@ -32,6 +38,11 @@
 5. 無料公開済みの内容(Zenn記事)との差分を明確にし、二重売りにしない
 6. 体験・数字は提供素材にあるものだけ。不足は【人間: ○○を記入】で残す
 7. 文体は「俺」の熱量を保ちつつ、購入者への丁寧さを1段上げる
+8. 感情設計は emotional-writing.md の「共感 → 緊張 → 解放」の順で組み、
+   edit-learnings.md のルールを初稿から反映する
+9. 図解・イメージを入れたい場所には、次の形式の画像ディレクティブを置く
+   (あとで note:images が GPT Image 2 で生成する):
+   <!-- gpt-image: 001-hero | 1536x1024 | 代替テキスト | 画像内容の日本語プロンプト -->
 
 生成後のセルフチェック:
 - [ ] 無料部分単体で価値があるか
