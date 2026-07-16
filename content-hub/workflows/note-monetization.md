@@ -63,8 +63,10 @@ graph TB
 | コマンド | 何をするか |
 |---|---|
 | `npm run note:new -- <slug>` | `note/works/<slug>/` を作成し、生成に使うコンテキストパックを表示 |
-| `npm run note:images -- <slug>` | 原稿内の `gpt-image` ディレクティブから画像を生成・埋め込み(生成済みはスキップ) |
+| `npm run note:doctor -- <slug>` | 実行前チェック(API鍵・原稿・未記入プレースホルダー等)。課金前の確認に使う |
+| `npm run note:images -- <slug>` | 原稿内の `gpt-image` ディレクティブから画像を生成・埋め込み(生成済みはスキップ)。`--mock` で課金なし検証 |
 | `npm run note:learn -- <slug>` | draft/final の差分を保存し、ルールを [../memory/edit-learnings.md](../memory/edit-learnings.md) へ自動抽出 |
+| `npm run note:status` | 全記事のパイプライン段階(下書き→画像→修正→公開)と今月売上を一覧表示 |
 | `npm run note:kpi` | `note/kpi/revenue.csv` を集計し、月10万円への進捗と必要販売数を表示 |
 
 各ステップの詳細な使い方はリポジトリ直下の `note/README.md` を参照。

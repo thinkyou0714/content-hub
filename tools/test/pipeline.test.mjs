@@ -16,9 +16,11 @@ import {
   injectImageLinks,
   parseImageDirectives,
   parseRevenueCsv,
+  placeholderPng,
   promptHash,
   summarizeDiff,
   todayStamp,
+  updateMeta,
   validateDirective,
 } from "../lib/pipeline-lib.mjs";
 
@@ -138,6 +140,25 @@ test("parseRevenueCsv + aggregateRevenue: 月別に売上を集計する", () =>
   assert.deepEqual(monthly.get("2026-07"), { revenue: 5980, units: 4 });
   assert.deepEqual(monthly.get("2026-08"), { revenue: 2000, units: 2 });
   assert.equal(monthly.size, 2);
+});
+
+test("placeholderPng: 有効なPNG署名を持つバッファを返す", () => {
+  const png = placeholderPng(32, 16);
+  assert.deepEqual([...png.subarray(0, 8)], [137, 80, 78, 71, 13, 10, 26, 10]);
+  assert.ok(png.length > 50);
+  assert.ok(png.subarray(-8).toString("latin1").includes("IEND"));
+});
+
+test("updateMeta: meta.json があれば patch をマージし、無ければ何もしない", () => {
+  const root = makeTmpRoot();
+  const workDir = path.join(root, "w");
+  fs.mkdirSync(workDir, { recursive: true });
+  assert.equal(updateMeta(workDir, { status: "x" }), null); // meta.json なし
+  fs.writeFileSync(path.join(workDir, "meta.json"), JSON.stringify({ slug: "w", status: "draft" }));
+  const next = updateMeta(workDir, { status: "images" });
+  assert.equal(next.status, "images");
+  assert.equal(next.slug, "w");
+  assert.ok(next.updated_at);
 });
 
 test("summarizeDiff: 追加・削除行を数える(ヘッダは除外)", () => {
@@ -262,4 +283,64 @@ test("note-kpi: 月別売上と目標進捗を表示する", () => {
   assert.equal(res.status, 0, res.stderr);
   assert.ok(res.stdout.includes("5,980円"), res.stdout);
   assert.ok(res.stdout.includes("2026-07"));
+});
+
+test("note-images --mock: 課金なしで画像生成・リンク挿入し、実生成時は置換対象になる", () => {
+  const root = makeTmpRoot();
+  runScript("note-new.mjs", ["mock-test"], root);
+  const draftPath = path.join(root, "note", "works", "mock-test", "draft.md");
+  // scaffoldのプレースホルダー行を実プロンプトに置き換える
+  let draft = fs.readFileSync(draftPath, "utf8");
+  draft = draft.replace(/<!-- gpt-image:[^>]*-->/, "<!-- gpt-image: hero | 1024x1024 | 図 | 実プロンプト -->");
+  fs.writeFileSync(draftPath, draft);
+
+  const res = runScript("note-images.mjs", ["mock-test", "--mock"], root);
+  assert.equal(res.status, 0, res.stderr);
+
+  const imagesDir = path.join(root, "note", "works", "mock-test", "images");
+  const png = fs.readFileSync(path.join(imagesDir, "hero.png"));
+  assert.deepEqual([...png.subarray(0, 4)], [137, 80, 78, 71]); // PNG署名
+  const manifest = JSON.parse(fs.readFileSync(path.join(imagesDir, "manifest.json"), "utf8"));
+  assert.equal(manifest.hero.mock, true);
+  assert.ok(fs.readFileSync(draftPath, "utf8").includes("![図](images/hero.png)"));
+
+  // mock再実行は冪等(スキップ)
+  const again = runScript("note-images.mjs", ["mock-test", "--mock"], root);
+  assert.ok(again.stdout.includes("スキップ"), again.stdout);
+
+  // 実生成モード(--mockなし)ではmock画像は再生成対象
+  const real = runScript("note-images.mjs", ["mock-test", "--dry-run"], root);
+  assert.ok(real.stdout.match(/\[生成\].*hero/), real.stdout);
+});
+
+test("note-doctor: 環境と原稿を診断し、書式不備は非0で終了する", () => {
+  const root = makeTmpRoot();
+  runScript("note-new.mjs", ["doc-test"], root);
+  // 正常な原稿(プレースホルダー警告は出るがエラーではない)
+  const ok = runScript("note-doctor.mjs", ["doc-test"], root);
+  assert.equal(ok.status, 0, ok.stderr);
+  assert.ok(ok.stdout.includes("診断:"));
+
+  // 書式不備を入れるとエラー終了
+  const draftPath = path.join(root, "note", "works", "doc-test", "draft.md");
+  fs.appendFileSync(draftPath, "\n<!-- gpt-image: broken | 1024x1024 | 不足 -->\n");
+  const ng = runScript("note-doctor.mjs", ["doc-test"], root);
+  assert.equal(ng.status, 1);
+
+  // 存在しないslugはエラー
+  assert.equal(runScript("note-doctor.mjs", ["no-such"], root).status, 1);
+});
+
+test("note-status: 記事の段階を一覧表示する", () => {
+  const root = makeTmpRoot();
+  assert.equal(runScript("note-new.mjs", ["art-one"], root).status, 0);
+  assert.equal(runScript("note-new.mjs", ["art-two"], root).status, 0);
+  // art-two は final.md を作って「修正済」段階にする
+  fs.writeFileSync(path.join(root, "note", "works", "art-two", "final.md"), "完成稿");
+  const res = runScript("note-status.mjs", [], root);
+  assert.equal(res.status, 0, res.stderr);
+  assert.ok(res.stdout.includes("art-one"));
+  assert.ok(res.stdout.includes("art-two"));
+  assert.ok(res.stdout.includes("下書き"));
+  assert.ok(res.stdout.includes("修正済"));
 });

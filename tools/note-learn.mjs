@@ -26,6 +26,7 @@ import {
   relFromRepo,
   summarizeDiff,
   todayStamp,
+  updateMeta,
 } from "./lib/pipeline-lib.mjs";
 
 const MODEL = process.env.NOTE_LEARN_MODEL || "claude-opus-4-8";
@@ -90,6 +91,9 @@ fs.writeFileSync(diffFile, diffText);
 
 const { added, removed } = summarizeDiff(diffText);
 console.log(`差分を保存しました: ${relFromRepo(diffFile)} (+${added} / -${removed} 行)`);
+
+// final.md が保存されている = 人間の完成稿ができたので final 段階に進める
+updateMeta(workDir, { status: "final", last_learned_at: stamp });
 
 let diffForModel = diffText;
 if (diffForModel.length > MAX_DIFF_CHARS) {

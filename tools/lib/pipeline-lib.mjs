@@ -4,6 +4,7 @@ import crypto from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import zlib from "node:zlib";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -238,4 +239,98 @@ export function appendToSection(file, sectionHeading, chunk) {
   const tail = after === "" ? "\n" : `\n\n${after}`;
   fs.writeFileSync(file, `${before}\n${chunk.replace(/\n+$/, "")}${tail}`);
   return true;
+}
+
+// ---------------------------------------------------------------------------
+// 記事メタデータ(note/works/<slug>/meta.json)
+// ---------------------------------------------------------------------------
+
+export function workDirForSlug(slug) {
+  return path.join(WORKS_DIR, slug);
+}
+
+export function readMeta(workDir) {
+  const txt = readFileIfExists(path.join(workDir, "meta.json"));
+  return txt ? JSON.parse(txt) : null;
+}
+
+// meta.json が存在するときだけ patch をマージして更新する(--file 実行など meta が無い場合は何もしない)。
+export function updateMeta(workDir, patch) {
+  const file = path.join(workDir, "meta.json");
+  const cur = readMeta(workDir);
+  if (cur === null) return null;
+  const next = { ...cur, ...patch, updated_at: new Date().toISOString() };
+  fs.writeFileSync(file, `${JSON.stringify(next, null, 2)}\n`);
+  return next;
+}
+
+// ワークスペースの状態からパイプラインの段階を推定する。
+// draft → images → final → published。mock画像は実生成とみなさない。
+export function pipelineStage(workDir) {
+  const meta = readMeta(workDir);
+  if (meta?.status === "published" || meta?.published_at) return "published";
+  if (fs.existsSync(path.join(workDir, "final.md"))) return "final";
+  const manifest = readFileIfExists(path.join(workDir, "images", "manifest.json"));
+  if (manifest) {
+    const entries = Object.values(JSON.parse(manifest));
+    if (entries.some((e) => e.mock !== true)) return "images";
+  }
+  return "draft";
+}
+
+// ---------------------------------------------------------------------------
+// mock画像(課金なしでパイプラインを検証するための単色プレースホルダーPNG)
+// ---------------------------------------------------------------------------
+
+const CRC_TABLE = (() => {
+  const table = new Uint32Array(256);
+  for (let n = 0; n < 256; n++) {
+    let c = n;
+    for (let k = 0; k < 8; k++) c = c & 1 ? 0xedb88320 ^ (c >>> 1) : c >>> 1;
+    table[n] = c >>> 0;
+  }
+  return table;
+})();
+
+function crc32(buf) {
+  let c = 0xffffffff;
+  for (let i = 0; i < buf.length; i++) c = CRC_TABLE[(c ^ buf[i]) & 0xff] ^ (c >>> 8);
+  return (c ^ 0xffffffff) >>> 0;
+}
+
+function pngChunk(type, data) {
+  const len = Buffer.alloc(4);
+  len.writeUInt32BE(data.length, 0);
+  const typeBuf = Buffer.from(type, "latin1");
+  const crc = Buffer.alloc(4);
+  crc.writeUInt32BE(crc32(Buffer.concat([typeBuf, data])), 0);
+  return Buffer.concat([len, typeBuf, data, crc]);
+}
+
+// 単色の truecolor PNG を生成する。標準の zlib のみ使用。
+export function placeholderPng(width = 64, height = 64, rgb = [221, 221, 221]) {
+  const ihdr = Buffer.alloc(13);
+  ihdr.writeUInt32BE(width, 0);
+  ihdr.writeUInt32BE(height, 4);
+  ihdr[8] = 8; // bit depth
+  ihdr[9] = 2; // color type: truecolor(RGB)
+  const stride = width * 3;
+  const raw = Buffer.alloc((stride + 1) * height);
+  for (let y = 0; y < height; y++) {
+    const rowStart = y * (stride + 1);
+    raw[rowStart] = 0; // filter type: none
+    for (let x = 0; x < width; x++) {
+      const p = rowStart + 1 + x * 3;
+      raw[p] = rgb[0];
+      raw[p + 1] = rgb[1];
+      raw[p + 2] = rgb[2];
+    }
+  }
+  const signature = Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]);
+  return Buffer.concat([
+    signature,
+    pngChunk("IHDR", ihdr),
+    pngChunk("IDAT", zlib.deflateSync(raw)),
+    pngChunk("IEND", Buffer.alloc(0)),
+  ]);
 }

@@ -23,17 +23,22 @@ npm run note:new -- my-article --title "記事タイトル"
 
 # 2. Claude Code に draft.md の生成を依頼(表示されたコンテキストパックを読ませる)
 
-# 3. 画像生成(GPT Image 2)。--dry-run で計画だけ確認できる
+# 3. 実行前チェック(API鍵・書式・未記入プレースホルダーを洗い出す)
+npm run note:doctor -- my-article
+
+# 4. 画像生成(GPT Image 2)。--dry-run で計画確認、--mock で課金なし検証
+npm run note:images -- my-article --mock   # まず課金なしで全フロー確認
 export OPENAI_API_KEY=sk-...
-npm run note:images -- my-article
+npm run note:images -- my-article          # 本番生成
 
-# 4. 人間が draft.md を修正し、完成稿を final.md として保存 → note に手動で公開
+# 5. 人間が draft.md を修正し、完成稿を final.md として保存 → note に手動で公開
 
-# 5. 修正内容を学習メモリに蓄積(次回の初稿品質が上がる)
+# 6. 修正内容を学習メモリに蓄積(次回の初稿品質が上がる)
 npm run note:learn -- my-article
 
-# 6. 売れたら revenue.csv に1行追記して進捗確認
-npm run note:kpi
+# 7. 状況確認と売上記録
+npm run note:status                        # 全記事の段階を俯瞰
+npm run note:kpi                           # 売れたら revenue.csv 追記後に進捗確認
 ```
 
 ## 画像ディレクティブの書き方
