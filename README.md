@@ -55,7 +55,7 @@ npm run preview   # zenn preview（http://localhost:8000）
 
 ```bash
 npm run note:new -- <slug>     # ワークスペース作成 + コンテキストパック表示
-npm run note:images -- <slug>  # gpt-image ディレクティブから画像生成(要 OPENAI_API_KEY）
+npm run note:images -- <slug>  # gpt-image ディレクティブから画像生成（要 OPENAI_API_KEY）
 npm run note:learn -- <slug>   # draft/final の差分を編集学習メモリへ蓄積
 npm run note:kpi               # 売上集計と月10万円目標への進捗表示
 npm run test:pipeline          # パイプラインのテスト

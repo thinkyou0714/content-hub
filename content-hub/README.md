@@ -47,8 +47,8 @@ graph LR
 | X投稿を作る | `prompts/x-single-post.md` または `prompts/x-thread.md` |
 | 記事をXに展開する | `prompts/repurpose.md` |
 | 有料noteを書く | `workflows/note-monetization.md`(パイプライン)+ `prompts/note-paid-article.md` |
-| noteの画像を作る | 原稿に `gpt-image` ディレクティブを書き `npm run note:images` |
-| 人間の修正を学習させる | `npm run note:learn` → `memory/edit-learnings.md`(手動抽出は `prompts/edit-learning.md`) |
+| noteの画像を作る | 原稿に `gpt-image` ディレクティブを書き `npm run note:images -- <slug>` |
+| 人間の修正を学習させる | `npm run note:learn -- <slug>` → `memory/edit-learnings.md`(手動抽出は `prompts/edit-learning.md`) |
 | ネタを探す | `research/trend-research.md` のGrokプロンプトを人間に依頼 |
 | 公開前チェック | `checklists/` の該当チェックリスト |
 

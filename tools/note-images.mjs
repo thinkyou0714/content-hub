@@ -8,14 +8,19 @@
 //   OPENAI_IMAGE_MODEL 省略時 "gpt-image-2"
 import fs from "node:fs";
 import path from "node:path";
+import { parseArgs } from "node:util";
 import {
-  REPO_ROOT,
+  DIRECTIVE_EXAMPLE,
+  DIRECTIVE_FORMAT,
+  PLACEHOLDER_RE,
   WORKS_DIR,
   ensureDir,
+  findMalformedDirectiveLines,
   injectImageLinks,
   parseImageDirectives,
   promptHash,
   readFileIfExists,
+  relFromRepo,
   validateDirective,
 } from "./lib/pipeline-lib.mjs";
 
@@ -26,15 +31,30 @@ function usage() {
   console.log("使い方: npm run note:images -- <slug> [--dry-run] [--force] [--file <markdown>]");
 }
 
-const args = process.argv.slice(2);
-const dryRun = args.includes("--dry-run");
-const force = args.includes("--force");
-const fileIndex = args.indexOf("--file");
-const slug = args.find((a) => !a.startsWith("--") && args[args.indexOf(a) - 1] !== "--file");
+let values;
+let positionals;
+try {
+  ({ values, positionals } = parseArgs({
+    options: {
+      "dry-run": { type: "boolean", default: false },
+      force: { type: "boolean", default: false },
+      file: { type: "string" },
+    },
+    allowPositionals: true,
+  }));
+} catch (err) {
+  console.error(err.message);
+  usage();
+  process.exit(1);
+}
+
+const dryRun = values["dry-run"];
+const force = values.force;
+const slug = positionals[0];
 
 let targetFile;
-if (fileIndex >= 0 && args[fileIndex + 1]) {
-  targetFile = path.resolve(args[fileIndex + 1]);
+if (values.file) {
+  targetFile = path.resolve(values.file);
 } else if (slug) {
   targetFile = path.join(WORKS_DIR, slug, "draft.md");
 } else {
@@ -53,26 +73,37 @@ const imagesDir = path.join(path.dirname(targetFile), "images");
 const manifestFile = path.join(imagesDir, "manifest.json");
 const manifest = JSON.parse(readFileIfExists(manifestFile) ?? "{}");
 
+function saveManifest() {
+  ensureDir(imagesDir);
+  fs.writeFileSync(manifestFile, `${JSON.stringify(manifest, null, 2)}\n`);
+}
+
+// 書き損じたディレクティブを黙って無視しない
+let hasError = false;
+for (const lineNo of findMalformedDirectiveLines(markdown)) {
+  console.error(`行${lineNo + 1}: gpt-image ディレクティブの書式が不正です。正しい書式:`);
+  console.error(`  ${DIRECTIVE_FORMAT}`);
+  hasError = true;
+}
+
 const directives = parseImageDirectives(markdown);
-if (directives.length === 0) {
+if (!hasError && directives.length === 0) {
   console.log("gpt-image ディレクティブが見つかりません。本文に次の形式で追加してください:");
-  console.log("  <!-- gpt-image: 001-hero | 1536x1024 | 代替テキスト | 画像の内容を表すプロンプト -->");
+  console.log(`  ${DIRECTIVE_EXAMPLE}`);
   process.exit(0);
 }
 
-let hasError = false;
+const seenIds = new Set();
 for (const d of directives) {
   for (const err of validateDirective(d)) {
     console.error(`行${d.line + 1} [${d.id}] ${err}`);
     hasError = true;
   }
-}
-const ids = directives.map((d) => d.id);
-for (const id of new Set(ids)) {
-  if (ids.filter((x) => x === id).length > 1) {
-    console.error(`id が重複しています: ${id}`);
+  if (seenIds.has(d.id)) {
+    console.error(`行${d.line + 1}: id が重複しています: ${d.id}`);
     hasError = true;
   }
+  seenIds.add(d.id);
 }
 if (hasError) process.exit(1);
 
@@ -80,14 +111,20 @@ const plan = directives.map((d) => {
   const hash = promptHash(d);
   const entry = manifest[d.id];
   const fileExists = entry && fs.existsSync(path.join(imagesDir, entry.file));
-  const needsGeneration = force || !fileExists || entry.promptHash !== hash;
-  return { directive: d, hash, needsGeneration };
+  // プレースホルダー(【…】)入りのプロンプトは課金APIに送らず保留する
+  const onHold = PLACEHOLDER_RE.test(d.prompt);
+  const needsGeneration = !onHold && (force || !fileExists || entry.promptHash !== hash);
+  return { directive: d, hash, needsGeneration, onHold };
 });
 
-console.log(`対象: ${path.relative(REPO_ROOT, targetFile)} / モデル: ${MODEL}`);
+console.log(`対象: ${relFromRepo(targetFile)} / モデル: ${MODEL}`);
 for (const p of plan) {
-  const mark = p.needsGeneration ? "生成" : "スキップ(生成済み)";
+  const mark = p.onHold ? "保留(プロンプト未記入)" : p.needsGeneration ? "生成" : "スキップ(生成済み)";
   console.log(`  [${mark}] ${p.directive.id} (${p.directive.size}) ${p.directive.prompt.slice(0, 60)}`);
+}
+const held = plan.filter((p) => p.onHold);
+if (held.length > 0) {
+  console.log("保留分は【…】のプレースホルダーを実際のプロンプトに書き換えると生成されます。");
 }
 
 if (dryRun) {
@@ -155,10 +192,10 @@ for (const p of toGenerate) {
     promptHash: p.hash,
     generatedAt: new Date().toISOString(),
   };
+  // 途中で失敗しても生成済み分を失わないよう、1枚ごとに保存する
+  saveManifest();
   console.log(`  保存: images/${fileName} (${Math.round(buffer.length / 1024)} KB)`);
 }
-
-fs.writeFileSync(manifestFile, `${JSON.stringify(manifest, null, 2)}\n`);
 
 // 生成済み画像(スキップ分も含む)のリンクを本文へ挿入・更新する
 const entries = plan
@@ -174,5 +211,7 @@ if (updated !== markdown) {
   console.log("本文に画像リンクを挿入しました。");
 }
 
-console.log(`完了: 生成 ${toGenerate.length}件 / スキップ ${plan.length - toGenerate.length}件`);
+console.log(
+  `完了: 生成 ${toGenerate.length}件 / スキップ ${plan.length - toGenerate.length - held.length}件 / 保留 ${held.length}件`,
+);
 console.log("注意: note へは手動アップロードが必要です(note に画像APIはありません)。");

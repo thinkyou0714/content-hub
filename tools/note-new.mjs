@@ -3,17 +3,29 @@
 // 使い方: npm run note:new -- <slug> [--title "記事タイトル"]
 import fs from "node:fs";
 import path from "node:path";
-import { REPO_ROOT, WORKS_DIR, ensureDir } from "./lib/pipeline-lib.mjs";
+import { parseArgs } from "node:util";
+import { WORKS_DIR, ensureDir, relFromRepo } from "./lib/pipeline-lib.mjs";
 
 function usage() {
   console.log('使い方: npm run note:new -- <slug> [--title "記事タイトル"]');
   console.log("  slug は英小文字・数字・ハイフン(例: n8n-approval-flow)");
 }
 
-const args = process.argv.slice(2);
-const slug = args.find((a) => !a.startsWith("--"));
-const titleIndex = args.indexOf("--title");
-const title = titleIndex >= 0 ? (args[titleIndex + 1] ?? "") : "";
+let values;
+let positionals;
+try {
+  ({ values, positionals } = parseArgs({
+    options: { title: { type: "string" } },
+    allowPositionals: true,
+  }));
+} catch (err) {
+  console.error(err.message);
+  usage();
+  process.exit(1);
+}
+
+const slug = positionals[0];
+const title = values.title ?? "";
 
 if (!slug || !/^[a-z0-9][a-z0-9-]{2,60}$/.test(slug)) {
   usage();
@@ -24,7 +36,7 @@ const workDir = path.join(WORKS_DIR, slug);
 const draftFile = path.join(workDir, "draft.md");
 
 if (fs.existsSync(draftFile)) {
-  console.error(`既に存在します: ${path.relative(REPO_ROOT, draftFile)}`);
+  console.error(`既に存在します: ${relFromRepo(draftFile)}`);
   process.exit(1);
 }
 
@@ -72,8 +84,7 @@ const meta = {
 };
 fs.writeFileSync(path.join(workDir, "meta.json"), `${JSON.stringify(meta, null, 2)}\n`);
 
-const rel = (p) => path.relative(REPO_ROOT, p);
-console.log(`作成しました: ${rel(workDir)}/`);
+console.log(`作成しました: ${relFromRepo(workDir)}/`);
 console.log("");
 console.log("次の手順:");
 console.log("  1. Claude Code に draft.md の生成を依頼する。必読コンテキスト(コンテキストパック):");

@@ -10,6 +10,7 @@
     "MD041": false, // 先頭行を見出しに: frontmatter があるため無効
     "MD060": false  // テーブル列スタイル: Zenn で正常描画される全角テーブルを許容
   },
-  "globs": ["articles/**/*.md", "content-hub/**/*.md", "README.md"],
-  "ignores": ["node_modules"]
+  "globs": ["articles/**/*.md", "content-hub/**/*.md", "README.md", "note/README.md"],
+  // note/works はAI初稿の下書き置き場、memory/edits は機械が書き込むキュー・差分のため対象外
+  "ignores": ["node_modules", "note/works", "content-hub/memory/edits"]
 }

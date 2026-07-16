@@ -34,3 +34,5 @@ graph LR
    [../voice/style-guide.md](../voice/style-guide.md) や各プロンプト本体へ昇格させ、
    このファイルは「最近の学び」に保つ
 4. ルールの抽出基準は [../prompts/edit-learning.md](../prompts/edit-learning.md) を参照
+5. `edit-learnings.md` と `edits/` は機械が書き込むため文体lint(textlint)の対象外
+   (`.textlintignore`)。内容の妥当性は月次レビューの人間確認で担保する
